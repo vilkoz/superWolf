@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 00:04:50 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 01:49:36 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,27 +29,39 @@ void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 	SDL_FillRect(s->surface, &rect, color);
 }
 
-void		draw_loop(t_sdl *s, t_vertex x, t_vertex vborder1, t_vertex vborder2)
+/*
+** typedef struct	s_pwall
+** {
+** 	t_vertex	x; // own horisontal borders
+** 	t_vertex	v1; // own borders
+** 	t_vertex	v2;
+** 	t_vertex	n1; // neighbors' borders
+** 	t_vertex	n2;
+** 	int			next; //neighbors' sector num, -1 if no
+** }				t_pwall;
+*/
+
+void		draw_loop(t_sdl *s, t_pwall w)
 {
 	int		i;
 	int		ya;
 	int		yb;
 	int		end;
 
-	i = MAX((int)x.x, 0) - 1;
-	end = MIN(W, (int)x.y);
+	i = MAX((int)w.x.x, 0) - 1;
+	end = MIN(W, (int)w.x.y);
 	while (++i < end)
 	{
-		ya = linear_interpolate(i, vertex(x.x, vborder1.x),
-				vertex(x.y, vborder2.x));
+		ya = linear_interpolate(i, vertex(w.x.x, w.v1.x),
+				vertex(w.x.y, w.v2.x));
 		ya = CLAMP(ya, 0, H);
-		yb = linear_interpolate(i, vertex(x.x, vborder1.y),
-				vertex(x.y, vborder2.y));
+		yb = linear_interpolate(i, vertex(w.x.x, w.v1.y),
+				vertex(w.x.y, w.v2.y));
 		yb = CLAMP(yb, 0, H);
 		draw_vline(s, vertex(i, 0), vertex(i, ya - 2), 0xcccccc);
 		draw_vline(s, vertex(i, ya - 2), vertex(i, ya - 1), 0x005555);
 		draw_vline(s, vertex(i, ya), vertex(i, yb),
-			(i == MAX((int)x.x, 0) || i == end - 1) ? 0x005555 : 0x00f0ff);
+			(i == MAX((int)w.x.x, 0) || i == end - 1) ? 0x005555 : 0x00f0ff);
 		draw_vline(s, vertex(i, yb + 1), vertex(i, yb + 2), 0x5555);
 		draw_vline(s, vertex(i, yb + 2), vertex(i, H), 0x1f1f1f);
 	}
@@ -62,12 +74,18 @@ void		draw_2d_wall(t_sdl *s, t_wall w)
 	SDL_RenderPresent(s->r);
 }
 
+void		init_neighbour(t_ipwall *borders, t_wall w, t_sector s, t_player p)
+{
+	borders->n1 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
+	borders->n2 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
+	perspective_transform(w.v1, &borders->n1.x, &borders->n1.y);
+	perspective_transform(w.v2, &borders->n2.x, &borders->n2.y);
+}
+
 void		draw_wall(t_sdl *s, t_wall w, t_player p)
 {
-	int			x1;
-	int			x2;
-	t_ivertex	vborder1;
-	t_ivertex	vborder2;
+	t_ivertex	x;
+	t_ipwall	borders;
 
 	w.v1 = player_coords(p, w.v1);
 	w.v2 = player_coords(p, w.v2);
@@ -75,17 +93,16 @@ void		draw_wall(t_sdl *s, t_wall w, t_player p)
 	if (w.v1.y <= 0 && w.v2.y <= 0)
 		return ;
 	if (w.v1.y <= 0 || w.v2.y <= 0)
-	{
 		clip_wall(&w.v1, &w.v2);
-	}
-	vborder1 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
-	vborder2 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
-	x1 = perspective_transform(w.v1, (&vborder1.x), (&vborder1.y));
-	x2 = perspective_transform(w.v2, (&vborder2.x), (&vborder2.y));
-	if (x1 > x2)
+	borders.v1 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
+	borders.v2 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
+	x.x = perspective_transform(w.v1, (&borders.v1.x), (&borders.v1.y));
+	x.y = perspective_transform(w.v2, (&borders.v2.x), (&borders.v2.y));
+	if (x.x > x.y)
 		return ;
-	draw_loop(s, vertex((float)x1, (float)x2), IVERTEX_TO_V(vborder1),
-			IVERTEX_TO_V(vborder2));
+	if (w.next >= 0)
+		init_neighbour(&borders, w, s->sectors[w.next], p);
+	draw_loop(s, IPWALL_TO_P(borders, x, w.next));
 }
 
 void		draw_walls(t_sdl *s, t_sector sector, t_player p)
@@ -96,7 +113,7 @@ void		draw_walls(t_sdl *s, t_sector sector, t_player p)
 	while (++i < (int)sector.num_vertices - 1)
 	{
 		draw_wall(s, INIT_WALL(sector.vertices[i], sector.vertices[i + 1],
-					sector.floor, sector.ceil), p);
+					sector.floor, sector.ceil, sector.neighbors[i]), p);
 	}
 }
 

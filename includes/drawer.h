@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 13:55:53 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/18 15:02:45 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 01:52:21 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ typedef struct	s_wall
 	t_vertex	v2;
 	float		floor;
 	float		ceil;
+	int			next;
 }				t_wall;
 
 typedef struct	s_ivertex
@@ -29,9 +30,40 @@ typedef struct	s_ivertex
 	int			y;
 }				t_ivertex;
 
-# define INIT_WALL(v1, v2, f, c) ((t_wall) {v1, v2, f, c})
+/*
+** perspective wall struct
+*/
+
+typedef struct	s_ipwall
+{
+	t_ivertex	v1;
+	t_ivertex	v2;
+	t_ivertex	n1;
+	t_ivertex	n2;
+}				t_ipwall;
+
+typedef struct	s_pwall
+{
+	t_vertex	x;
+	t_vertex	v1;
+	t_vertex	v2;
+	t_vertex	n1;
+	t_vertex	n2;
+	int			next;
+}				t_pwall;
+
+typedef t_pwall	T;
+
+# define INIT_WALL(v1, v2, f, c, n) ((t_wall) {v1, v2, f, c, n})
 # define INIT_IVERTEX(x, y) ((t_ivertex) {(x), (y)})
 # define IVERTEX_TO_V(v) ((t_vertex) {((float)v.x), ((float)v.y)})
+
+/*
+** just to buypass one line macro and 4 arg function restriction, sorry
+*/
+
+# define V(v) IVERTEX_TO_V(v)
+# define IPWALL_TO_P(w, x, n) ((T){V(x), V(w.v1), V(w.v2), V(w.n1), V(w.n2), n})
 
 void			draw_sectors(t_sdl *s, t_sector *sectors, t_player p);
 
