@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 01:49:36 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 19:26:59 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,30 @@ void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 	SDL_Rect		rect;
 
 	rect.x = (int)MIN(v1.x, v2.x);
-	rect.y = (int)MIN(v1.y, v2.y);
+	rect.y = (int)v1.y;
 	rect.w = 1;
-	rect.h = (int)MAX(v2.y, v1.y) - rect.y;
+	rect.h = (int)v2.y - rect.y;
 	SDL_FillRect(s->surface, &rect, color);
+}
+
+void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
+{
+	int		ya;
+	int		yb;
+
+
+	ya = linear_interpolate(i, vertex(w.x.x, w.n1.x),
+			vertex(w.x.y, w.n2.x));
+	ya = CLAMP(ya, 0, H);
+	yb = linear_interpolate(i, vertex(w.x.x, w.n1.y),
+			vertex(w.x.y, w.n2.y));
+	yb = CLAMP(yb, 0, H);
+	draw_vline(s, vertex(i, v.x), vertex(i, ya - 1), 0x097df9);
+	draw_vline(s, vertex(i, ya - 1), vertex(i, ya), 0xffffff);
+	s->ystart[i] = CLAMP(MAX(ya, v.x), s->ystart[i], H - 1);
+	draw_vline(s, vertex(i, yb), vertex(i, yb + 1), 0xffffff);
+	draw_vline(s, vertex(i, yb + 1), vertex(i, v.y), 0x097df9);
+	s->yend[i] = CLAMP(MIN(yb, v.y), 0, s->yend[i]);
 }
 
 /*
@@ -41,29 +61,34 @@ void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 ** }				t_pwall;
 */
 
-void		draw_loop(t_sdl *s, t_pwall w)
+void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 {
 	int		i;
 	int		ya;
 	int		yb;
 	int		end;
 
-	i = MAX((int)w.x.x, 0) - 1;
-	end = MIN(W, (int)w.x.y);
+	i = MAX((int)w.x.x, now.xstart) - 1;
+	end = MIN(now.xend, (int)w.x.y);
+	if (w.next >= 0 && i + 1 <= end)
+		queue_push(&s->queue, (void*)&INIT_ITEM(w.next, (i + 1), end));
 	while (++i < end)
 	{
 		ya = linear_interpolate(i, vertex(w.x.x, w.v1.x),
 				vertex(w.x.y, w.v2.x));
-		ya = CLAMP(ya, 0, H);
+		ya = CLAMP(ya, s->ystart[i], s->yend[i]);
 		yb = linear_interpolate(i, vertex(w.x.x, w.v1.y),
 				vertex(w.x.y, w.v2.y));
-		yb = CLAMP(yb, 0, H);
-		draw_vline(s, vertex(i, 0), vertex(i, ya - 2), 0xcccccc);
+		yb = CLAMP(yb, s->ystart[i], s->yend[i]);
+		draw_vline(s, vertex(i, s->ystart[i]), vertex(i, ya - 2), 0xcccccc);
 		draw_vline(s, vertex(i, ya - 2), vertex(i, ya - 1), 0x005555);
-		draw_vline(s, vertex(i, ya), vertex(i, yb),
-			(i == MAX((int)w.x.x, 0) || i == end - 1) ? 0x005555 : 0x00f0ff);
 		draw_vline(s, vertex(i, yb + 1), vertex(i, yb + 2), 0x5555);
-		draw_vline(s, vertex(i, yb + 2), vertex(i, H), 0x1f1f1f);
+		draw_vline(s, vertex(i, yb + 2), vertex(i, s->yend[i]), 0x1f1f1f);
+		if (w.next == -1)
+			draw_vline(s, vertex(i, ya), vertex(i, yb),
+				(i == MAX((int)w.x.x, 0) || i == end - 1) ? 0x5555 : 0xf0ff);
+		else
+			draw_neighbor(s, w, i, INIT_IVERTEX(ya, yb));
 	}
 }
 
@@ -74,7 +99,7 @@ void		draw_2d_wall(t_sdl *s, t_wall w)
 	SDL_RenderPresent(s->r);
 }
 
-void		init_neighbour(t_ipwall *borders, t_wall w, t_sector s, t_player p)
+void		init_neighbor(t_ipwall *borders, t_wall w, t_sector s, t_player p)
 {
 	borders->n1 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
 	borders->n2 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
@@ -82,7 +107,7 @@ void		init_neighbour(t_ipwall *borders, t_wall w, t_sector s, t_player p)
 	perspective_transform(w.v2, &borders->n2.x, &borders->n2.y);
 }
 
-void		draw_wall(t_sdl *s, t_wall w, t_player p)
+void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
 {
 	t_ivertex	x;
 	t_ipwall	borders;
@@ -101,11 +126,11 @@ void		draw_wall(t_sdl *s, t_wall w, t_player p)
 	if (x.x > x.y)
 		return ;
 	if (w.next >= 0)
-		init_neighbour(&borders, w, s->sectors[w.next], p);
-	draw_loop(s, IPWALL_TO_P(borders, x, w.next));
+		init_neighbor(&borders, w, s->sectors[w.next], p);
+	draw_loop(s, IPWALL_TO_P(borders, x, w.next), now);
 }
 
-void		draw_walls(t_sdl *s, t_sector sector, t_player p)
+void		draw_walls(t_sdl *s, t_sector sector, t_player p, t_item now)
 {
 	int		i;
 
@@ -113,13 +138,35 @@ void		draw_walls(t_sdl *s, t_sector sector, t_player p)
 	while (++i < (int)sector.num_vertices - 1)
 	{
 		draw_wall(s, INIT_WALL(sector.vertices[i], sector.vertices[i + 1],
-					sector.floor, sector.ceil, sector.neighbors[i]), p);
+					sector.floor, sector.ceil, sector.neighbors[i]), p, now);
 	}
 }
 
 void		draw_sectors(t_sdl *s, t_sector *sectors, t_player p)
 {
+	t_item		*now;
+	int			i;
+	int			rendered[2];
+
 	SDL_SetRenderDrawColor(s->r, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(s->r);
-	draw_walls(s, sectors[0], p);
+	queue_init(&s->queue, MAX_QUEUE, sizeof(t_item));
+	queue_push(&s->queue, (void*)&INIT_ITEM(p.sector, 0, W - 1));
+	ft_bzero((void*)rendered, 2 * sizeof(int));
+	i = -1;
+	while (++i < W)
+	{
+		s->ystart[i] = 0;
+		s->yend[i] = H - 1;
+	}
+	while (23)
+	{
+		if ((now = (t_item*)queue_pop(&s->queue)) == NULL)
+			break ;
+		if (rendered[now->num] & (MAX_QUEUE + 1))
+			break ;
+		draw_walls(s, sectors[now->num], p, *now);
+		rendered[now->num]++;
+		ft_memdel((void**)&now);
+	}
 }
