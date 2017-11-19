@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:26:41 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 17:06:17 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 21:33:52 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ void	handle_events(t_sdl *s)
 			s->quit = 1;
 		else if (e.type == SDL_KEYDOWN)
 		{
-			(e.key.keysym.sym == SDLK_w) ? player_move(&s->player, 1) : 0;
-			(e.key.keysym.sym == SDLK_s) ? player_move(&s->player, -1) : 0;
+			(e.key.keysym.sym == SDLK_w) ? player_move(s, &s->player, 1) : 0;
+			(e.key.keysym.sym == SDLK_s) ? player_move(s, &s->player, -1) : 0;
 			(e.key.keysym.sym == SDLK_a) ? player_rotate(&s->player, -5.0/90.0) : 0;
 			(e.key.keysym.sym == SDLK_d) ? player_rotate(&s->player, 5.0/90.0) : 0;
 		}

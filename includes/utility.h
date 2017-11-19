@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/16 23:50:47 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/18 13:38:08 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 20:58:43 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # define CLAMP(x, a, b) MIN(MAX(x, a), b)
 # define CROSS(xa, ya, xb, yb) ((xa) * (yb) - (ya) * (xb))
 # define OVERLAP(a, b, c, d) (MIN(a, b) <= MAX(c, d) && MIN(c, d) <= MAX(a, b))
+# define POINT_SIDE(a, b, c) (v_cross(v_sub(c, b), v_sub(a, b)))
+# define O(a, b, c, d) OVERLAP(a, b, c, d)
+# define INTER_BOX(a, b, c, d) (O(a.x, b.x, c.x, d.x) && O(a.y, b.y, c.y, d.y))
 # define NEAR_Z (1e-4)
 # define NEAR_X (1e-5)
 # define FAR_Z (5.0)

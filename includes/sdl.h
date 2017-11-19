@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:29:03 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 18:35:45 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 21:31:59 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,7 @@ typedef struct	s_sdl
 	SDL_Window	*win2;
 	SDL_Renderer	*r;
 }				t_sdl;
+
+void				player_move(t_sdl *s, t_player *p, float amp);
 
 #endif
