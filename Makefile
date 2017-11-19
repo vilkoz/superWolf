@@ -27,6 +27,7 @@ SRCS = main.c							\
 	   parser.c							\
 	   player.c							\
 	   drawer.c							\
+	   neighbor.c						\
 	   utility/vertex.c					\
 	   utility/utility.c				\
 

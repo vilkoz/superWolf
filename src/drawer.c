@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 19:26:59 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/19 20:42:13 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "player.h"
 #include "configs.h"
 #include "drawer.h"
-#include <math.h>
 
 void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 {
@@ -27,26 +26,6 @@ void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 	rect.w = 1;
 	rect.h = (int)v2.y - rect.y;
 	SDL_FillRect(s->surface, &rect, color);
-}
-
-void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
-{
-	int		ya;
-	int		yb;
-
-
-	ya = linear_interpolate(i, vertex(w.x.x, w.n1.x),
-			vertex(w.x.y, w.n2.x));
-	ya = CLAMP(ya, 0, H);
-	yb = linear_interpolate(i, vertex(w.x.x, w.n1.y),
-			vertex(w.x.y, w.n2.y));
-	yb = CLAMP(yb, 0, H);
-	draw_vline(s, vertex(i, v.x), vertex(i, ya - 1), 0x097df9);
-	draw_vline(s, vertex(i, ya - 1), vertex(i, ya), 0xffffff);
-	s->ystart[i] = CLAMP(MAX(ya, v.x), s->ystart[i], H - 1);
-	draw_vline(s, vertex(i, yb), vertex(i, yb + 1), 0xffffff);
-	draw_vline(s, vertex(i, yb + 1), vertex(i, v.y), 0x097df9);
-	s->yend[i] = CLAMP(MIN(yb, v.y), 0, s->yend[i]);
 }
 
 /*
@@ -63,32 +42,30 @@ void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
 
 void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 {
-	int		i;
-	int		ya;
-	int		yb;
-	int		end;
+	t_ivertex	x;
+	t_ivertex	y;
 
-	i = MAX((int)w.x.x, now.xstart) - 1;
-	end = MIN(now.xend, (int)w.x.y);
-	if (w.next >= 0 && i + 1 <= end)
-		queue_push(&s->queue, (void*)&INIT_ITEM(w.next, (i + 1), end));
-	while (++i < end)
+	x.x = MAX((int)w.x.x, now.xstart) - 1;
+	x.y = MIN(now.xend, (int)w.x.y);
+	if (w.next >= 0 && x.x + 1 <= x.y)
+		queue_push(&s->queue, (void*)&INIT_ITEM(w.next, (x.x + 1), x.y));
+	while (++x.x < x.y)
 	{
-		ya = linear_interpolate(i, vertex(w.x.x, w.v1.x),
+		y.x = linear_interpolate(x.x, vertex(w.x.x, w.v1.x),
 				vertex(w.x.y, w.v2.x));
-		ya = CLAMP(ya, s->ystart[i], s->yend[i]);
-		yb = linear_interpolate(i, vertex(w.x.x, w.v1.y),
+		y.x = CLAMP(y.x, s->ystart[x.x], s->yend[x.x]);
+		y.y = linear_interpolate(x.x, vertex(w.x.x, w.v1.y),
 				vertex(w.x.y, w.v2.y));
-		yb = CLAMP(yb, s->ystart[i], s->yend[i]);
-		draw_vline(s, vertex(i, s->ystart[i]), vertex(i, ya - 2), 0xcccccc);
-		draw_vline(s, vertex(i, ya - 2), vertex(i, ya - 1), 0x005555);
-		draw_vline(s, vertex(i, yb + 1), vertex(i, yb + 2), 0x5555);
-		draw_vline(s, vertex(i, yb + 2), vertex(i, s->yend[i]), 0x1f1f1f);
+		y.y = CLAMP(y.y, s->ystart[x.x], s->yend[x.x]);
+		draw_vline(s, vertex(x.x, s->ystart[x.x]), vertex(x.x, y.x - 2), 0xcccccc);
+		draw_vline(s, vertex(x.x, y.x - 2), vertex(x.x, y.x - 1), 0x005555);
+		draw_vline(s, vertex(x.x, y.y + 1), vertex(x.x, y.y + 2), 0x5555);
+		draw_vline(s, vertex(x.x, y.y + 2), vertex(x.x, s->yend[x.x]), 0x1f1f1f);
 		if (w.next == -1)
-			draw_vline(s, vertex(i, ya), vertex(i, yb),
-				(i == MAX((int)w.x.x, 0) || i == end - 1) ? 0x5555 : 0xf0ff);
+			draw_vline(s, vertex(x.x, y.x), vertex(x.x, y.y),
+				(x.x == MAX((int)w.x.x, 0) || x.x == x.y - 1) ? 0x5555 : 0xf0ff);
 		else
-			draw_neighbor(s, w, i, INIT_IVERTEX(ya, yb));
+			draw_neighbor(s, w, x.x, INIT_IVERTEX(y.x, y.y));
 	}
 }
 
@@ -97,14 +74,6 @@ void		draw_2d_wall(t_sdl *s, t_wall w)
 	SDL_SetRenderDrawColor(s->r, 255, 255, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawLine(s->r, w.v1.x + W/2, w.v1.y + H/2, w.v2.x + W/2, w.v2.y + H/2);
 	SDL_RenderPresent(s->r);
-}
-
-void		init_neighbor(t_ipwall *borders, t_wall w, t_sector s, t_player p)
-{
-	borders->n1 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
-	borders->n2 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
-	perspective_transform(w.v1, &borders->n1.x, &borders->n1.y);
-	perspective_transform(w.v2, &borders->n2.x, &borders->n2.y);
 }
 
 void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
@@ -123,7 +92,7 @@ void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
 	borders.v2 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
 	x.x = perspective_transform(w.v1, (&borders.v1.x), (&borders.v1.y));
 	x.y = perspective_transform(w.v2, (&borders.v2.x), (&borders.v2.y));
-	if (x.x > x.y)
+	if (x.x > x.y || x.y < now.xstart || x.x > now.xend)
 		return ;
 	if (w.next >= 0)
 		init_neighbor(&borders, w, s->sectors[w.next], p);
@@ -154,11 +123,9 @@ void		draw_sectors(t_sdl *s, t_sector *sectors, t_player p)
 	queue_push(&s->queue, (void*)&INIT_ITEM(p.sector, 0, W - 1));
 	ft_bzero((void*)rendered, 2 * sizeof(int));
 	i = -1;
+	ft_bzero((void*)s->ystart, W * sizeof(int));
 	while (++i < W)
-	{
-		s->ystart[i] = 0;
 		s->yend[i] = H - 1;
-	}
 	while (23)
 	{
 		if ((now = (t_item*)queue_pop(&s->queue)) == NULL)
