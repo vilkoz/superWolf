@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:29:03 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 21:31:59 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:33:30 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,15 @@ typedef struct	s_item
 	int			xend;
 }				t_item;
 
+typedef struct	s_keys
+{
+	char		w;
+	char		a;
+	char		s;
+	char		d;
+	char		q;
+}				t_keys;
+
 typedef struct	s_sdl
 {
 	SDL_Window	*win;
@@ -39,9 +48,7 @@ typedef struct	s_sdl
 	int			ystart[W];
 	int			yend[W];
 	t_queue		queue;
-// temporal
-	SDL_Window	*win2;
-	SDL_Renderer	*r;
+	t_keys		keys;
 }				t_sdl;
 
 void				player_move(t_sdl *s, t_player *p, float amp);

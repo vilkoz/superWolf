@@ -10,7 +10,7 @@ LIBFT = libft/libft.a
 
 LIBFT_IDIR = libft/
 
-HEADERS = -I $(LIBFT_IDIR) -I $(IDIR)
+HEADERS = -I $(LIBFT_IDIR)/include -I $(IDIR)
 
 COMPILER_FLAGS = -Wall -Wextra -Werror -g
 
@@ -30,6 +30,7 @@ SRCS = main.c							\
 	   drawer/neighbor.c				\
 	   utility/vertex.c					\
 	   utility/utility.c				\
+	   collision.c
 
 BINS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
 

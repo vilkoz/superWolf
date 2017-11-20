@@ -1,33 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   player.h                                           :+:      :+:    :+:   */
+/*   collision.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/18 01:05:07 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:16:43 by vrybalko         ###   ########.fr       */
+/*   Created: 2017/11/20 22:30:11 by vrybalko          #+#    #+#             */
+/*   Updated: 2017/11/20 22:54:55 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PLAYER_H
-# define PLAYER_H
+#ifndef COLLISION_H
+# define COLLISION_H
 
-# include "vertex.h"
+#include "player.h"
+#include "utility.h"
+#include "sdl.h"
 
-typedef struct		s_player
-{
-	t_vertex		pos;
-	float			angle;
-	float			cos;
-	float			sin;
-	float			z;
-	float			yaw;
-	unsigned		sector;
-}					t_player;
-
-t_player			player(void);
-t_vertex			player_coords(t_player p, t_vertex v);
-void				player_rotate(t_player *p, float angle);
+void		detect_sector_change(t_sdl *s, t_player *p, t_vertex d);
+t_vertex	horisontal_collision(t_sdl *s, t_player *p, t_vertex d);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/16 23:50:47 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 20:58:43 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:22:22 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define UTILITY_H
 
 # include "vertex.h"
+# include "player.h"
 
 # define MIN(a, b) ((a) < (b) ? (a) : (b))
 # define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -28,7 +29,8 @@
 # define FAR_Z (5.0)
 # define FAR_X (20.0)
 
-int				perspective_transform(t_vertex v, int *floor, int *ceil);
+int				perspective_transform(t_vertex v, int *floor, int *ceil,
+					t_player p);
 t_vertex		rotate_vertex(t_vertex v, float cosa, float sina);
 t_vertex		intersect_lines(t_vertex p1, t_vertex p2, t_vertex p3,
 						t_vertex p4);

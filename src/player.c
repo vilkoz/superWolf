@@ -6,14 +6,15 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:04:55 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 21:33:03 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:32:21 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "player.h"
 #include <math.h> 
+#include "player.h"
 #include "utility.h"
 #include "sdl.h"
+#include "collision.h"
 
 t_player			player(void)
 {
@@ -25,6 +26,7 @@ t_player			player(void)
 	p.cos = cosf(p.angle);
 	p.z = 6;
 	p.sector = 0;
+	p.yaw = 1;
 	return (p);
 }
 
@@ -46,22 +48,10 @@ inline void			player_rotate(t_player *p, float angle)
 
 inline void			player_move(t_sdl *s, t_player *p, float amp)
 {
-	int				i;
-	t_sector		*sect;
-	t_vertex		*v;
 	t_vertex		d;
 
 	d = INIT_VERTEX(p->cos * 0.2 * amp, p->sin * 0.2 * amp);
-	sect = &s->sectors[p->sector];
-	v = sect->vertices;
-	i = -1;
-	while ((unsigned)++i < sect->num_vertices - 1)
-		if (sect->neighbors[i] >= 0
-		&& INTER_BOX(p->pos, V_ADD(p->pos, d), v[i], v[i+1])
-		&& POINT_SIDE(V_ADD(p->pos, d), v[i], v[i+1]) < 0)
-		{
-			p->sector = sect->neighbors[i];
-			break ;
-		}
+	detect_sector_change(s, p, d);
+	d = horisontal_collision(s, p, d);
 	p->pos = V_ADD(p->pos, d);
 }

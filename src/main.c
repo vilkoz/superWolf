@@ -6,13 +6,14 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:26:41 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 21:33:52 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:37:11 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sdl.h"
 #include "configs.h"
 #include "drawer.h"
+#include "libft.h"
 
 void	init_sdl(t_sdl *sdl)
 {
@@ -29,7 +30,8 @@ void	init_sdl(t_sdl *sdl)
 	sdl->surface = SDL_GetWindowSurface(sdl->win);
 	sdl->quit = 0;
 	sdl->player = player();
-	SDL_CreateWindowAndRenderer(640, 480, 0, &sdl->win2, &sdl->r);
+	ft_bzero((void*)&sdl->keys, sizeof(t_keys));
+	SDL_SetRelativeMouseMode(1);
 }
 
 void	close_sdl(t_sdl *sdl)
@@ -37,6 +39,17 @@ void	close_sdl(t_sdl *sdl)
 	SDL_FreeSurface(sdl->surface);
 	SDL_DestroyWindow(sdl->win);
 	SDL_Quit();
+}
+
+void	handle_mouse(t_sdl *s)
+{
+	int		x;
+	int		y;
+
+	SDL_GetRelativeMouseState(&x, &y);
+	s->player.yaw += y * 0.02f;
+	if (x != 0)
+		player_rotate(&s->player, (x * 0.5f) / 90.0f);
 }
 
 void	handle_events(t_sdl *s)
@@ -47,14 +60,25 @@ void	handle_events(t_sdl *s)
 	{
 		if (e.type == SDL_QUIT)
 			s->quit = 1;
-		else if (e.type == SDL_KEYDOWN)
+		else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 		{
-			(e.key.keysym.sym == SDLK_w) ? player_move(s, &s->player, 1) : 0;
-			(e.key.keysym.sym == SDLK_s) ? player_move(s, &s->player, -1) : 0;
-			(e.key.keysym.sym == SDLK_a) ? player_rotate(&s->player, -5.0/90.0) : 0;
-			(e.key.keysym.sym == SDLK_d) ? player_rotate(&s->player, 5.0/90.0) : 0;
+			(e.key.keysym.sym == SDLK_w) ? s->keys.w = e.type == SDL_KEYDOWN: 0;
+			(e.key.keysym.sym == SDLK_a) ? s->keys.a = e.type == SDL_KEYDOWN: 0;
+			(e.key.keysym.sym == SDLK_s) ? s->keys.s = e.type == SDL_KEYDOWN: 0;
+			(e.key.keysym.sym == SDLK_d) ? s->keys.d = e.type == SDL_KEYDOWN: 0;
+		}
+		if (e.type == SDL_KEYDOWN)
+		{
+			(e.key.keysym.sym == SDLK_q) ? s->keys.q ^= 1 : 0;
+			(e.key.keysym.sym == SDLK_ESCAPE) ? s->quit = 1 : 0;
 		}
 	}
+	handle_mouse(s);
+	SDL_SetRelativeMouseMode(!s->keys.q);
+	(s->keys.w) ? player_move(s, &s->player, 2.5) : 0;
+	(s->keys.s) ? player_move(s, &s->player, -2.5) : 0;
+	(s->keys.a) ? player_rotate(&s->player, -10.0/90.0) : 0;
+	(s->keys.d) ? player_rotate(&s->player, 10.0/90.0) : 0;
 }
 
 int		main(void)
