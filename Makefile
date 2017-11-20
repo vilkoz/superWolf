@@ -26,8 +26,8 @@ SRC_DIR = src/
 SRCS = main.c							\
 	   parser.c							\
 	   player.c							\
-	   drawer.c							\
-	   neighbor.c						\
+	   drawer/drawer.c					\
+	   drawer/neighbor.c				\
 	   utility/vertex.c					\
 	   utility/utility.c				\
 
