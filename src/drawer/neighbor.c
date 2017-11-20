@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/19 20:40:06 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:22:46 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:55:18 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
 	s->yend[i] = CLAMP(MIN(yb, v.y), 0, s->yend[i]);
 }
 
-void		init_neighbor(t_ipwall *borders, t_wall w, t_sector s, t_player p)
+void		init_neighbor(t_pwall *borders, t_wall w, t_sector s, t_player p)
 {
-	borders->n1 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
-	borders->n2 = INIT_IVERTEX(s.ceil - p.z, s.floor - p.z);
+	borders->n1 = INIT_VERTEX(s.ceil - p.z, s.floor - p.z);
+	borders->n2 = INIT_VERTEX(s.ceil - p.z, s.floor - p.z);
 	perspective_transform(w.v1, &borders->n1.x, &borders->n1.y, p);
 	perspective_transform(w.v2, &borders->n2.x, &borders->n2.y, p);
 }

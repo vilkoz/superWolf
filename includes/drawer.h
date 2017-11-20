@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 13:55:53 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 20:43:36 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:55:30 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef t_pwall	T;
 # define IPWALL_TO_P(w, x, n) ((T){V(x), V(w.v1), V(w.v2), V(w.n1), V(w.n2), n})
 
 void			draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color);
-void			init_neighbor(t_ipwall *borders, t_wall w, t_sector s,
+void			init_neighbor(t_pwall *borders, t_wall w, t_sector s,
 					t_player p);
 void			draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v);
 void			draw_sectors(t_sdl *s, t_sector *sectors, t_player p);

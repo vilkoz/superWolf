@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:04:55 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:42:06 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:16:09 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "player.h"
 #include "utility.h"
 #include "sdl.h"
+#include "configs.h"
 #include "collision.h"
 
 t_player			player(void)
@@ -24,7 +25,7 @@ t_player			player(void)
 	p.angle = 0;
 	p.sin = sinf(p.angle);
 	p.cos = cosf(p.angle);
-	p.z = 6;
+	p.z = PLAYER_HEIGHT;
 	p.sector = 0;
 	p.yaw = 1;
 	p.velocity_z = 0;
@@ -57,4 +58,13 @@ inline void			player_move(t_sdl *s, t_player *p, float amp)
 	detect_sector_change(s, p, d);
 	d = horisontal_collision(s, p, d);
 	p->pos = V_ADD(p->pos, d);
+}
+
+inline void			player_jump(t_player *p)
+{
+	if (!p->ground)
+		return ;
+	p->velocity_z = JUMP_G;
+	p->falling = 1;
+	p->ground = 0;
 }

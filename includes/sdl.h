@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:29:03 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:45:16 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:44:58 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct	s_keys
 	char		s;
 	char		d;
 	char		q;
+	char		space;
 }				t_keys;
 
 typedef struct	s_sdl
@@ -45,6 +46,7 @@ typedef struct	s_sdl
 	SDL_Surface	*surface;
 	char		quit;
 	t_sector	*sectors;
+	int			num_sectors;
 	t_player	player;
 	int			ystart[W];
 	int			yend[W];

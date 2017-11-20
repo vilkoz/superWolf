@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 00:53:07 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/18 00:54:04 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:21:51 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,10 @@
 
 # define HFOV (0.75 * H)
 # define VFOV (0.2 * H)
+
+# define PLAYER_HEIGHT 6
+# define G 9.8
+# define DELTA_G 0.9
+# define JUMP_G 2
 
 #endif

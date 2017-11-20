@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 02:04:24 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/18 02:20:01 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:40:45 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ typedef struct		s_sector
 	unsigned		num_vertices;
 }					t_sector;
 
-t_sector			*parse(char *path);
+t_sector			*parse(char *path, int *num);
+t_sector			sector(float ceil, float floor);
+void				sector_add_vertex(t_sector *s, t_vertex v, int neighbor);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:28:15 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:55:08 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
 {
 	t_ivertex	x;
-	t_ipwall	borders;
+	t_pwall		borders;
 
 	w.v1 = player_coords(p, w.v1);
 	w.v2 = player_coords(p, w.v2);
@@ -80,8 +80,8 @@ void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
 		return ;
 	if (w.v1.y <= 0 || w.v2.y <= 0)
 		clip_wall(&w.v1, &w.v2);
-	borders.v1 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
-	borders.v2 = INIT_IVERTEX(w.ceil - p.z, w.floor - p.z);
+	borders.v1 = INIT_VERTEX(w.ceil - p.z, w.floor - p.z);
+	borders.v2 = INIT_VERTEX(w.ceil - p.z, w.floor - p.z);
 	x.x = perspective_transform(w.v1, (&borders.v1.x), (&borders.v1.y), p);
 	x.y = perspective_transform(w.v2, (&borders.v2.x), (&borders.v2.y), p);
 	if (x.x > x.y || x.y < now.xstart || x.x > now.xend)
@@ -111,7 +111,7 @@ void		draw_sectors(t_sdl *s, t_sector *sectors, t_player p)
 
 	queue_init(&s->queue, MAX_QUEUE, sizeof(t_item));
 	queue_push(&s->queue, (void*)&INIT_ITEM(p.sector, 0, W - 1));
-	ft_bzero((void*)rendered, 2 * sizeof(int));
+	ft_bzero((void*)rendered, s->num_sectors * sizeof(int));
 	i = -1;
 	ft_bzero((void*)s->ystart, W * sizeof(int));
 	while (++i < W)

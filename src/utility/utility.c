@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 00:46:35 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:23:56 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:53:35 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ inline t_vertex	rotate_vertex(t_vertex v, float cosa, float sina)
 ** returns also to floor and ceil
 */
 
-inline int		perspective_transform(t_vertex v, int *floor, int *ceil,
+inline int		perspective_transform(t_vertex v, float *floor, float *ceil,
 					t_player p)
 {
 	t_vertex	scale;

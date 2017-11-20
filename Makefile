@@ -30,7 +30,8 @@ SRCS = main.c							\
 	   drawer/neighbor.c				\
 	   utility/vertex.c					\
 	   utility/utility.c				\
-	   collision.c
+	   collision.c						\
+	   sector.c							\
 
 BINS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
 

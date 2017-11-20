@@ -6,12 +6,13 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:26:41 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:48:22 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 00:45:10 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sdl.h"
 #include "configs.h"
+#include "collision.h"
 #include "drawer.h"
 #include "libft.h"
 
@@ -66,6 +67,7 @@ void	handle_events(t_sdl *s)
 			(SYM(e) == SDLK_a) ? s->keys.a = e.type == SDL_KEYDOWN : 0;
 			(SYM(e) == SDLK_s) ? s->keys.s = e.type == SDL_KEYDOWN : 0;
 			(SYM(e) == SDLK_d) ? s->keys.d = e.type == SDL_KEYDOWN : 0;
+			(SYM(e) == SDLK_SPACE) ? s->keys.space = e.type == SDL_KEYDOWN : 0;
 		}
 		if (e.type == SDL_KEYDOWN)
 		{
@@ -79,6 +81,8 @@ void	handle_events(t_sdl *s)
 	(s->keys.s) ? player_move(s, &s->player, -2.5) : 0;
 	(s->keys.a) ? player_rotate(&s->player, -10.0/90.0) : 0;
 	(s->keys.d) ? player_rotate(&s->player, 10.0/90.0) : 0;
+	(s->keys.space) ? player_jump(&s->player) : 0;
+	vertical_collision(s, &s->player);
 }
 
 int		main(void)
@@ -86,7 +90,7 @@ int		main(void)
 	t_sdl		s;
 
 	init_sdl(&s);
-	s.sectors = parse("map.txt");
+	s.sectors = parse("map.txt", &s.num_sectors);
 	while (!s.quit)
 	{
 		SDL_FillRect(s.surface, NULL, 0);
