@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:05:07 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:16:43 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:42:08 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ typedef struct		s_player
 	float			z;
 	float			yaw;
 	unsigned		sector;
+	float			velocity_z;
+	char			falling;
+	char			ground;
 }					t_player;
 
 t_player			player(void);

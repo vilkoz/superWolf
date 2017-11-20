@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:04:55 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:32:21 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:42:06 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ t_player			player(void)
 	p.z = 6;
 	p.sector = 0;
 	p.yaw = 1;
+	p.velocity_z = 0;
+	p.falling = 0;
+	p.ground = 1;
 	return (p);
 }
 

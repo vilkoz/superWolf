@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:26:41 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:37:11 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:48:22 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,19 @@ void	handle_events(t_sdl *s)
 			s->quit = 1;
 		else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 		{
-			(e.key.keysym.sym == SDLK_w) ? s->keys.w = e.type == SDL_KEYDOWN: 0;
-			(e.key.keysym.sym == SDLK_a) ? s->keys.a = e.type == SDL_KEYDOWN: 0;
-			(e.key.keysym.sym == SDLK_s) ? s->keys.s = e.type == SDL_KEYDOWN: 0;
-			(e.key.keysym.sym == SDLK_d) ? s->keys.d = e.type == SDL_KEYDOWN: 0;
+			(SYM(e) == SDLK_w) ? s->keys.w = e.type == SDL_KEYDOWN : 0;
+			(SYM(e) == SDLK_a) ? s->keys.a = e.type == SDL_KEYDOWN : 0;
+			(SYM(e) == SDLK_s) ? s->keys.s = e.type == SDL_KEYDOWN : 0;
+			(SYM(e) == SDLK_d) ? s->keys.d = e.type == SDL_KEYDOWN : 0;
 		}
 		if (e.type == SDL_KEYDOWN)
 		{
-			(e.key.keysym.sym == SDLK_q) ? s->keys.q ^= 1 : 0;
-			(e.key.keysym.sym == SDLK_ESCAPE) ? s->quit = 1 : 0;
+			if (SYM(e) == SDLK_q)
+				SDL_SetRelativeMouseMode(!(s->keys.q ^= 1));
+			(SYM(e) == SDLK_ESCAPE) ? s->quit = 1 : 0;
 		}
 	}
-	handle_mouse(s);
-	SDL_SetRelativeMouseMode(!s->keys.q);
+	(!s->keys.q) ? handle_mouse(s) : 0;
 	(s->keys.w) ? player_move(s, &s->player, 2.5) : 0;
 	(s->keys.s) ? player_move(s, &s->player, -2.5) : 0;
 	(s->keys.a) ? player_rotate(&s->player, -10.0/90.0) : 0;

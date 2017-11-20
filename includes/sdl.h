@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:29:03 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/20 23:33:30 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/20 23:45:16 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "configs.h"
 # include "../libft/include/libft.h"
 
+# define SYM(e) (e.key.keysym.sym)
 # define MAX_QUEUE 32
 # define INIT_ITEM(n, s, e) ((t_item){n, s, e})
 
