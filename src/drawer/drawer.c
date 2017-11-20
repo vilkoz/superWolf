@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 00:55:08 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 01:02:44 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,13 @@ void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 		y.y = linear_interpolate(x.x, vertex(w.x.x, w.v1.y),
 				vertex(w.x.y, w.v2.y));
 		y.y = CLAMP(y.y, s->ystart[x.x], s->yend[x.x]);
-		draw_vline(s, vertex(x.x, s->ystart[x.x]), vertex(x.x, y.x - 2), 0xcccccc);
-		draw_vline(s, vertex(x.x, y.x - 2), vertex(x.x, y.x - 1), 0x005555);
-		draw_vline(s, vertex(x.x, y.y + 1), vertex(x.x, y.y + 2), 0x5555);
-		draw_vline(s, vertex(x.x, y.y + 2), vertex(x.x, s->yend[x.x]), 0x1f1f1f);
+		draw_vline(s, vertex(x.x, s->ystart[x.x]), vertex(x.x, y.x - 2), CCEIL);
+		draw_vline(s, vertex(x.x, y.x - 2), vertex(x.x, y.x - 1), CBORD);
+		draw_vline(s, vertex(x.x, y.y + 1), vertex(x.x, y.y + 2), CBORD);
+		draw_vline(s, vertex(x.x, y.y + 2), vertex(x.x, s->yend[x.x]), CFLOR);
 		if (w.next == -1)
 			draw_vline(s, vertex(x.x, y.x), vertex(x.x, y.y),
-				(x.x == MAX((int)w.x.x, 0) || x.x == x.y - 1) ? 0x5555 : 0xf0ff);
+				(x.x == MAX((int)w.x.x, 0) || x.x == x.y - 1) ? CBORD : CWALL);
 		else
 			draw_neighbor(s, w, x.x, INIT_IVERTEX(y.x, y.y));
 	}

@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 00:53:07 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 00:21:51 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 01:03:53 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,11 @@
 # define G 9.8
 # define DELTA_G 0.9
 # define JUMP_G 2
+
+# define CCEIL 0xcccccc
+# define CBORD 0x5555
+# define CFLOR 0x1f1f1f
+# define CWALL 0xf0ff
+# define CNEIG 0x097df9
 
 #endif

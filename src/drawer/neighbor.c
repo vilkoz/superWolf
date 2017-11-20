@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/19 20:40:06 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 00:55:18 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 01:03:36 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
 	yb = linear_interpolate(i, vertex(w.x.x, w.n1.y),
 			vertex(w.x.y, w.n2.y));
 	yb = CLAMP(yb, 0, H);
-	draw_vline(s, vertex(i, v.x), vertex(i, ya - 1), 0x097df9);
-	(ya > v.x) ? draw_vline(s, vertex(i, ya - 1), vertex(i, ya), 0xffffff) : 0;
+	draw_vline(s, vertex(i, v.x), vertex(i, ya - 1), CNEIG);
+	(ya > v.x) ? draw_vline(s, vertex(i, ya - 1), vertex(i, ya), CBORD) : 0;
 	s->ystart[i] = CLAMP(MAX(ya, v.x), s->ystart[i], H - 1);
-	(yb < v.y) ? draw_vline(s, vertex(i, yb), vertex(i, yb + 1), 0xffffff) : 0;
-	draw_vline(s, vertex(i, yb + 1), vertex(i, v.y), 0x097df9);
+	(yb < v.y) ? draw_vline(s, vertex(i, yb), vertex(i, yb + 1), CBORD) : 0;
+	draw_vline(s, vertex(i, yb + 1), vertex(i, v.y), CNEIG);
 	s->yend[i] = CLAMP(MIN(yb, v.y), 0, s->yend[i]);
 }
 
