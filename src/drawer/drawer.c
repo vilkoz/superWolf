@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 01:02:44 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 01:40:27 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,11 @@ void		draw_sectors(t_sdl *s, t_sector *sectors, t_player p)
 {
 	t_item		*now;
 	int			i;
-	int			rendered[2];
+	int			*rendered;
 
 	queue_init(&s->queue, MAX_QUEUE, sizeof(t_item));
 	queue_push(&s->queue, (void*)&INIT_ITEM(p.sector, 0, W - 1));
-	ft_bzero((void*)rendered, s->num_sectors * sizeof(int));
+	rendered = (int*)ft_memalloc(s->num_sectors * sizeof(int));
 	i = -1;
 	ft_bzero((void*)s->ystart, W * sizeof(int));
 	while (++i < W)

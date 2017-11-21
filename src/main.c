@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 01:26:41 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 00:45:10 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 01:39:29 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ int		main(void)
 {
 	t_sdl		s;
 
-	init_sdl(&s);
 	s.sectors = parse("map.txt", &s.num_sectors);
+	init_sdl(&s);
 	while (!s.quit)
 	{
 		SDL_FillRect(s.surface, NULL, 0);
