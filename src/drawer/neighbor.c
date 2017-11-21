@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/19 20:40:06 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 21:46:23 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 22:19:19 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,18 @@
 #include "player.h"
 #include "configs.h"
 #include "utility.h"
+#include "sdl.h"
+
+void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
+{
+	SDL_Rect		rect;
+
+	rect.x = (int)MIN(v1.x, v2.x);
+	rect.y = (int)v1.y;
+	rect.w = 1;
+	rect.h = (int)v2.y - rect.y;
+	SDL_FillRect(s->surface, &rect, color);
+}
 
 void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
 {

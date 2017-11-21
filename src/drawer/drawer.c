@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/18 12:51:11 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 01:40:27 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 22:55:18 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,20 @@
 #include "configs.h"
 #include "drawer.h"
 
-void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
+int			shade(int c, float k)
 {
-	SDL_Rect		rect;
+	float		r;
+	float		g;
+	float		b;
 
-	rect.x = (int)MIN(v1.x, v2.x);
-	rect.y = (int)v1.y;
-	rect.w = 1;
-	rect.h = (int)v2.y - rect.y;
-	SDL_FillRect(s->surface, &rect, color);
+	k = CLAMP(k, 0.0, 1.0);
+	r = (float)((c & 0xff0000) >> 16);
+	g = (float)((c & 0x00ff00) >> 8);
+	b = (float)((c & 0x0000ff) >> 0);
+	r *= (1.0 - k);
+	g *= (1.0 - k);
+	b *= (1.0 - k);
+	return (((int)r << 16) + ((int)g << 8) + ((int)b));
 }
 
 /*
@@ -40,10 +45,11 @@ void		draw_vline(t_sdl *s, t_vertex v1, t_vertex v2, unsigned color)
 ** }				t_pwall;
 */
 
-void		draw_loop(t_sdl *s, t_pwall w, t_item now)
+void		draw_loop(t_sdl *s, t_pwall w, t_item now, t_vertex v)
 {
 	t_ivertex	x;
 	t_ivertex	y;
+	float		z;
 
 	x.x = MAX((int)w.x.x, now.xstart) - 1;
 	x.y = MIN(now.xend, (int)w.x.y);
@@ -51,6 +57,8 @@ void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 		queue_push(&s->queue, (void*)&INIT_ITEM(w.next, (x.x + 1), x.y));
 	while (++x.x < x.y)
 	{
+		z = (float)linear_interpolate(x.x, vertex(w.x.x, v.x),
+				vertex(w.x.y, v.y)) / 40.0;
 		y.x = linear_interpolate(x.x, vertex(w.x.x, w.v1.x),
 				vertex(w.x.y, w.v2.x));
 		y.x = CLAMP(y.x, s->ystart[x.x], s->yend[x.x]);
@@ -63,7 +71,7 @@ void		draw_loop(t_sdl *s, t_pwall w, t_item now)
 		draw_vline(s, vertex(x.x, y.y + 2), vertex(x.x, s->yend[x.x]), CFLOR);
 		if (w.next == -1)
 			draw_vline(s, vertex(x.x, y.x), vertex(x.x, y.y),
-				(x.x == MAX((int)w.x.x, 0) || x.x == x.y - 1) ? CBORD : CWALL);
+(x.x == MAX((int)w.x.x, 0) || x.x == x.y - 1) ? CBORD : shade(CWALL, z));
 		else
 			draw_neighbor(s, w, x.x, INIT_IVERTEX(y.x, y.y));
 	}
@@ -88,7 +96,8 @@ void		draw_wall(t_sdl *s, t_wall w, t_player p, t_item now)
 		return ;
 	if (w.next >= 0)
 		init_neighbor(&borders, w, s->sectors[w.next], p);
-	draw_loop(s, IPWALL_TO_P(borders, x, w.next), now);
+	draw_loop(s, IPWALL_TO_P(borders, x, w.next), now,
+			INIT_VERTEX(w.v1.y, w.v2.y));
 }
 
 void		draw_walls(t_sdl *s, t_sector sector, t_player p, t_item now)
