@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/19 20:40:06 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/21 01:03:36 by vrybalko         ###   ########.fr       */
+/*   Updated: 2017/11/21 21:46:23 by vrybalko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ void		draw_neighbor(t_sdl *s, t_pwall w, int i, t_ivertex v)
 
 	ya = linear_interpolate(i, vertex(w.x.x, w.n1.x),
 			vertex(w.x.y, w.n2.x));
-	ya = CLAMP(ya, 0, H);
+	ya = CLAMP(ya, s->ystart[i], s->yend[i]);
 	yb = linear_interpolate(i, vertex(w.x.x, w.n1.y),
 			vertex(w.x.y, w.n2.y));
-	yb = CLAMP(yb, 0, H);
+	yb = CLAMP(yb, s->ystart[i], s->yend[i]);
 	draw_vline(s, vertex(i, v.x), vertex(i, ya - 1), CNEIG);
 	(ya > v.x) ? draw_vline(s, vertex(i, ya - 1), vertex(i, ya), CBORD) : 0;
 	s->ystart[i] = CLAMP(MAX(ya, v.x), s->ystart[i], H - 1);
